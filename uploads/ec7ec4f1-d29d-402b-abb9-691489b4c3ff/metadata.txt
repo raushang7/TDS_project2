@@ -1,0 +1,13 @@
+CSV Preview:
+         date  temperature_c  precip_mm
+0  2024-01-01              5          0
+1  2024-01-02              7          1
+2  2024-01-03              6          0
+
+
+Analysis Summary:
+- Average Temperature: 5.10 C
+- Date with Max Precipitation: 2024-01-06
+- Minimum Temperature: 2.0 C
+- Temp/Precip Correlation: 0.0414
+- Average Precipitation: 0.90 mm

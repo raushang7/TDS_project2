@@ -1,5 +1,0 @@
-Most active court (2019-2022): 9_13
-Regression slope for court 33_10: 4.216676701260559
-Most active court (2019-2022): 9_13
-Regression slope for court 33_10: 4.216676701260559
-Plot generated with data URI length: 21183

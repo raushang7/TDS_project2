@@ -1,0 +1,180 @@
+
+[2025-08-17 09:33:28]
+✅ pandas already installed.
+----------------------------------------
+
+[2025-08-17 09:33:28]
+📜 Executing Code:
+import pandas as pd
+
+df = pd.read_csv("edges.csv", header=None, nrows=3)
+preview = df.to_string()
+
+with open("uploads/213efe4c-08a2-40fc-a342-e808b105207b/metadata.txt", "a") as f:
+    f.write("CSV Preview:\n")
+    f.write(preview + "\n")
+
+----------------------------------------
+
+[2025-08-17 09:33:28]
+❌ Execution error:
+Traceback (most recent call last):
+  File "/home/raushan/TDS_project2/uploads/213efe4c-08a2-40fc-a342-e808b105207b/job_/script.py", line 3, in <module>
+    df = pd.read_csv('edges.csv', header=None, nrows=3)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/raushan/TDS_project2/venv/lib/python3.12/site-packages/pandas/io/parsers/readers.py", line 1026, in read_csv
+    return _read(filepath_or_buffer, kwds)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/raushan/TDS_project2/venv/lib/python3.12/site-packages/pandas/io/parsers/readers.py", line 620, in _read
+    parser = TextFileReader(filepath_or_buffer, **kwds)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/raushan/TDS_project2/venv/lib/python3.12/site-packages/pandas/io/parsers/readers.py", line 1620, in __init__
+    self._engine = self._make_engine(f, self.engine)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/raushan/TDS_project2/venv/lib/python3.12/site-packages/pandas/io/parsers/readers.py", line 1880, in _make_engine
+    self.handles = get_handle(
+                   ^^^^^^^^^^^
+  File "/home/raushan/TDS_project2/venv/lib/python3.12/site-packages/pandas/io/common.py", line 873, in get_handle
+    handle = open(
+             ^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: 'edges.csv'
+
+----------------------------------------
+
+[2025-08-17 09:33:32]
+✅ pandas already installed.
+----------------------------------------
+
+[2025-08-17 09:33:32]
+📜 Executing Code:
+import pandas as pd
+
+df = pd.read_csv(
+    "uploads/213efe4c-08a2-40fc-a342-e808b105207b/edges.csv", header=None, nrows=3
+)
+preview = df.to_string()
+
+with open("uploads/213efe4c-08a2-40fc-a342-e808b105207b/metadata.txt", "a") as f:
+    f.write("CSV Preview:\n")
+    f.write(preview + "\n")
+
+----------------------------------------
+
+[2025-08-17 09:33:33]
+✅ Code executed successfully:
+
+----------------------------------------
+
+[2025-08-17 09:34:09]
+✅ pandas already installed.
+----------------------------------------
+
+[2025-08-17 09:34:09]
+✅ networkx already installed.
+----------------------------------------
+
+[2025-08-17 09:34:09]
+✅ matplotlib already installed.
+----------------------------------------
+
+[2025-08-17 09:34:09]
+📜 Executing Code:
+import pandas as pd
+import networkx as nx
+import matplotlib.pyplot as plt
+import base64
+import io
+import json
+
+# Load the data and create the graph
+df = pd.read_csv("uploads/213efe4c-08a2-40fc-a342-e808b105207b/edges.csv")
+G = nx.from_pandas_edgelist(df, "source", "target")
+
+# 1. How many edges are in the network?
+edge_count = G.number_of_edges()
+
+# 2. Which node has the highest degree?
+degrees = dict(G.degree())
+highest_degree_node = max(degrees, key=degrees.get)
+
+# 3. What is the average degree of the network?
+node_count = G.number_of_nodes()
+if node_count > 0:
+    average_degree = sum(degrees.values()) / node_count
+else:
+    average_degree = 0
+
+# 4. What is the network density?
+density = nx.density(G)
+
+# 5. What is the length of the shortest path between Alice and Eve?
+try:
+    shortest_path_alice_eve = nx.shortest_path_length(G, source="Alice", target="Eve")
+except nx.NetworkXNoPath:
+    shortest_path_alice_eve = -1  # Or None, or an appropriate indicator
+
+# 6. Draw the network graph and encode as base64
+plt.figure(figsize=(8, 6))
+nx.draw(
+    G,
+    with_labels=True,
+    node_color="skyblue",
+    node_size=1500,
+    edge_color="black",
+    font_size=12,
+    font_weight="bold",
+)
+plt.title("Network Graph")
+buf = io.BytesIO()
+plt.savefig(buf, format="png", bbox_inches="tight")
+buf.seek(0)
+network_graph_b64 = base64.b64encode(buf.read()).decode("utf-8")
+plt.close()
+
+# 7. Plot the degree distribution and encode as base64
+degree_sequence = sorted([d for n, d in G.degree()], reverse=True)
+degree_counts = nx.degree_histogram(G)
+
+plt.figure(figsize=(8, 6))
+plt.bar(range(len(degree_counts)), degree_counts, width=0.80, color="g")
+plt.title("Degree Distribution")
+plt.ylabel("Count")
+plt.xlabel("Degree")
+
+buf = io.BytesIO()
+plt.savefig(buf, format="png", bbox_inches="tight")
+buf.seek(0)
+degree_histogram_b64 = base64.b64encode(buf.read()).decode("utf-8")
+plt.close()
+
+# Create the final JSON object
+result = {
+    "edge_count": edge_count,
+    "highest_degree_node": highest_degree_node,
+    "average_degree": average_degree,
+    "density": density,
+    "shortest_path_alice_eve": shortest_path_alice_eve,
+    "network_graph": network_graph_b64,
+    "degree_histogram": degree_histogram_b64,
+}
+
+# Save the result to a file
+with open("uploads/213efe4c-08a2-40fc-a342-e808b105207b/result.json", "w") as f:
+    json.dump(result, f, indent=4)
+
+----------------------------------------
+
+[2025-08-17 09:34:09]
+✅ Code executed successfully:
+
+----------------------------------------
+
+[2025-08-17 09:34:19]
+📜 Executing Code:
+
+----------------------------------------
+
+[2025-08-17 09:34:19]
+✅ Code executed successfully:
+
+----------------------------------------

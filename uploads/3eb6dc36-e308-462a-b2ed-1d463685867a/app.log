@@ -1,0 +1,20 @@
+2025-08-17 09:31:31,162 [INFO] Step-1: Folder created: uploads/3eb6dc36-e308-462a-b2ed-1d463685867a
+2025-08-17 09:31:31,168 [INFO] Using Python executable: venv/bin/python3
+2025-08-17 09:31:31,168 [INFO] Step-2: File sent {'questions.txt': 'uploads/3eb6dc36-e308-462a-b2ed-1d463685867a/question.txt', 'sample-sales.csv': 'uploads/3eb6dc36-e308-462a-b2ed-1d463685867a/sample-sales.csv'}
+2025-08-17 09:31:31,168 [INFO] 🤖 Step-1: Getting scrap code and metadata from llm. Tries count = 0
+2025-08-17 09:31:40,825 [INFO] 🤖 Step-1: Successfully parsed response from LLM.
+2025-08-17 09:31:40,826 [INFO] 💻 Step-3: Entering loop
+2025-08-17 09:31:40,826 [INFO] 💻 Loop-1: Running LLM code.
+2025-08-17 09:31:41,540 [ERROR] ❌💻 Loop-1: Code execution failed: ❌ Execution error: Traceback (most recent call last): File "/home/raushan/TDS_project2/uploads/3eb6dc36-e308-462a-b2ed-1d463685867a/job_/script.py", line 3, in <module> df = pd.read_csv('sample-sales.csv') ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ File "/home/raushan/TDS_project2/venv/lib/python3.12/site-packages/pandas/io/parsers/readers.py", line 1026, in read_csv return _read(filepath_or_buffer, kwds) ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ File "/home/raushan/TDS_project2/venv/lib/python3.12/site-packages/pandas/io/parsers/readers.py", line 620, in _read parser = TextFileReader(filepath_or_buffer, **kwds) ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ File "/home/raushan/TDS_project2/venv/lib/python3.12/site-packages/pandas/io/parsers/readers.py", line 1620, in __init__ self._engine = self._make_engine(f, self.engine) ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ File "/home/raushan/TDS_project2/venv/lib/python3.12/site-packages/pandas/io/parsers/readers.py", line 1880, in _make_engine self.handles = get_handle( ^^^^^^^^^^^ File "/home/raushan/TDS_project2/venv/lib/python3.12/site-packages/pandas/io/common.py", line 873, in get_handle handle = open( ^^^^^ FileNotFoundError: [Errno 2] No such file or directory: 'sample-sales.csv'
+2025-08-17 09:31:41,540 [INFO] 🤖 Loop-1: Inside Loop LLM call.
+2025-08-17 09:31:46,028 [INFO] 💻 Loop-2: Running LLM code.
+2025-08-17 09:31:46,384 [INFO] ✅💻 Loop-2: Code executed successfully.
+2025-08-17 09:31:46,385 [INFO] 🤖 Loop-2: Inside Loop LLM call.
+2025-08-17 09:32:03,193 [INFO] 💻 Loop-3: Running LLM code.
+2025-08-17 09:32:04,045 [INFO] ✅💻 Loop-3: Code executed successfully.
+2025-08-17 09:32:04,045 [INFO] ✅📁 Loop-3: Found result files.
+2025-08-17 09:32:04,046 [INFO] 🤖 Loop-3: Checking result validity.
+2025-08-17 09:32:14,795 [INFO] ✅ Loop-3: Validation successful, no re-run needed.
+2025-08-17 09:32:14,795 [INFO] 💻 Step-6: Running final code.
+2025-08-17 09:32:14,809 [INFO] 📁 Step-7: Reading result.json
+2025-08-17 09:32:14,809 [INFO] ✅📁 Step-7: send result back

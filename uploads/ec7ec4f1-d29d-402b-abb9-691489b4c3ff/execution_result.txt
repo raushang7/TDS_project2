@@ -1,0 +1,177 @@
+
+[2025-08-17 09:32:30]
+✅ pandas already installed.
+----------------------------------------
+
+[2025-08-17 09:32:30]
+📜 Executing Code:
+import pandas as pd
+
+df = pd.read_csv("sample-weather.csv", nrows=3)
+preview = df.to_string()
+print(preview)
+
+with open("uploads/ec7ec4f1-d29d-402b-abb9-691489b4c3ff/metadata.txt", "a") as f:
+    f.write("CSV Preview:\n")
+    f.write(preview + "\n\n")
+
+----------------------------------------
+
+[2025-08-17 09:32:30]
+❌ Execution error:
+Traceback (most recent call last):
+  File "/home/raushan/TDS_project2/uploads/ec7ec4f1-d29d-402b-abb9-691489b4c3ff/job_/script.py", line 3, in <module>
+    df = pd.read_csv('sample-weather.csv', nrows=3)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/raushan/TDS_project2/venv/lib/python3.12/site-packages/pandas/io/parsers/readers.py", line 1026, in read_csv
+    return _read(filepath_or_buffer, kwds)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/raushan/TDS_project2/venv/lib/python3.12/site-packages/pandas/io/parsers/readers.py", line 620, in _read
+    parser = TextFileReader(filepath_or_buffer, **kwds)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/raushan/TDS_project2/venv/lib/python3.12/site-packages/pandas/io/parsers/readers.py", line 1620, in __init__
+    self._engine = self._make_engine(f, self.engine)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/raushan/TDS_project2/venv/lib/python3.12/site-packages/pandas/io/parsers/readers.py", line 1880, in _make_engine
+    self.handles = get_handle(
+                   ^^^^^^^^^^^
+  File "/home/raushan/TDS_project2/venv/lib/python3.12/site-packages/pandas/io/common.py", line 873, in get_handle
+    handle = open(
+             ^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: 'sample-weather.csv'
+
+----------------------------------------
+
+[2025-08-17 09:32:37]
+✅ pandas already installed.
+----------------------------------------
+
+[2025-08-17 09:32:37]
+📜 Executing Code:
+import pandas as pd
+
+df = pd.read_csv(
+    "uploads/ec7ec4f1-d29d-402b-abb9-691489b4c3ff/sample-weather.csv", nrows=3
+)
+preview = df.to_string()
+print(preview)
+
+with open("uploads/ec7ec4f1-d29d-402b-abb9-691489b4c3ff/metadata.txt", "a") as f:
+    f.write("CSV Preview:\n")
+    f.write(preview + "\n\n")
+
+----------------------------------------
+
+[2025-08-17 09:32:37]
+✅ Code executed successfully:
+         date  temperature_c  precip_mm
+0  2024-01-01              5          0
+1  2024-01-02              7          1
+2  2024-01-03              6          0
+
+----------------------------------------
+
+[2025-08-17 09:33:01]
+✅ pandas already installed.
+----------------------------------------
+
+[2025-08-17 09:33:01]
+✅ matplotlib already installed.
+----------------------------------------
+
+[2025-08-17 09:33:01]
+📜 Executing Code:
+import pandas as pd
+import matplotlib.pyplot as plt
+import base64
+import io
+import json
+
+# Load the full dataset
+df = pd.read_csv("uploads/ec7ec4f1-d29d-402b-abb9-691489b4c3ff/sample-weather.csv")
+
+# Convert date column to datetime objects for better plotting
+df["date"] = pd.to_datetime(df["date"])
+
+# Calculations
+average_temp_c = df["temperature_c"].mean()
+max_precip_date = df.loc[df["precip_mm"].idxmax()]["date"].strftime("%Y-%m-%d")
+min_temp_c = float(df["temperature_c"].min())  # Ensure it's a standard number type
+average_precip_mm = df["precip_mm"].mean()
+temp_precip_correlation = df["temperature_c"].corr(df["precip_mm"])
+
+# Generate temperature line chart
+plt.figure(figsize=(8, 4))
+plt.plot(df["date"], df["temperature_c"], color="red")
+plt.title("Temperature Over Time")
+plt.xlabel("Date")
+plt.ylabel("Temperature (°C)")
+plt.xticks(rotation=45)
+plt.tight_layout()
+buf = io.BytesIO()
+plt.savefig(buf, format="png", dpi=72)
+buf.seek(0)
+temp_line_chart_b64 = base64.b64encode(buf.read()).decode("utf-8")
+plt.close()
+
+# Generate precipitation histogram
+plt.figure(figsize=(8, 4))
+plt.hist(df["precip_mm"], color="orange", bins=15)
+plt.title("Precipitation Distribution")
+plt.xlabel("Precipitation (mm)")
+plt.ylabel("Frequency")
+plt.tight_layout()
+buf = io.BytesIO()
+plt.savefig(buf, format="png", dpi=72)
+buf.seek(0)
+precip_histogram_b64 = base64.b64encode(buf.read()).decode("utf-8")
+plt.close()
+
+# Create the final JSON object
+result = {
+    "average_temp_c": average_temp_c,
+    "max_precip_date": max_precip_date,
+    "min_temp_c": min_temp_c,
+    "temp_precip_correlation": temp_precip_correlation,
+    "average_precip_mm": average_precip_mm,
+    "temp_line_chart": temp_line_chart_b64,
+    "precip_histogram": precip_histogram_b64,
+}
+
+# Save the final answer to result.json
+with open("uploads/ec7ec4f1-d29d-402b-abb9-691489b4c3ff/result.json", "w") as f:
+    json.dump(result, f)
+
+# Append summary to metadata.txt
+summary = f"""
+Analysis Summary:
+- Average Temperature: {average_temp_c:.2f} C
+- Date with Max Precipitation: {max_precip_date}
+- Minimum Temperature: {min_temp_c} C
+- Temp/Precip Correlation: {temp_precip_correlation:.4f}
+- Average Precipitation: {average_precip_mm:.2f} mm
+"""
+with open("uploads/ec7ec4f1-d29d-402b-abb9-691489b4c3ff/metadata.txt", "a") as f:
+    f.write(summary)
+
+print(
+    "Analysis complete. Results saved to uploads/ec7ec4f1-d29d-402b-abb9-691489b4c3ff/result.json"
+)
+
+----------------------------------------
+
+[2025-08-17 09:33:02]
+✅ Code executed successfully:
+Analysis complete. Results saved to uploads/ec7ec4f1-d29d-402b-abb9-691489b4c3ff/result.json
+
+----------------------------------------
+
+[2025-08-17 09:33:31]
+📜 Executing Code:
+
+----------------------------------------
+
+[2025-08-17 09:33:31]
+✅ Code executed successfully:
+
+----------------------------------------
