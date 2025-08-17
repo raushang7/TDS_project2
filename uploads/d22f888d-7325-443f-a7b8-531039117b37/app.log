@@ -1,0 +1,17 @@
+2025-08-17 07:50:14,645 [INFO] Step-1: Folder created: uploads/d22f888d-7325-443f-a7b8-531039117b37
+2025-08-17 07:50:14,651 [INFO] Using Python executable: venv/bin/python3
+2025-08-17 07:50:14,652 [INFO] Step-2: File sent {'question.txt': 'uploads/d22f888d-7325-443f-a7b8-531039117b37/question.txt'}
+2025-08-17 07:50:14,652 [INFO] 🤖 Step-1: Getting scrap code and metadata from llm. Tries count = 0
+2025-08-17 07:51:08,902 [INFO] 🤖 Step-1: Successfully parsed response from LLM.
+2025-08-17 07:51:08,902 [INFO] 💻 Step-3: Entering loop
+2025-08-17 07:51:08,903 [INFO] 💻 Loop-1: Running LLM code.
+2025-08-17 07:52:25,838 [ERROR] ❌💻 Loop-1: Code execution failed: ❌ Execution error: Traceback (most recent call last): File "/home/raushan/TDS_project2/uploads/d22f888d-7325-443f-a7b8-531039117b37/job_/script.py", line 81, in <module> plt.savefig(buf, format='webp', quality=80, dpi=75) File "/home/raushan/TDS_project2/venv/lib/python3.12/site-packages/matplotlib/pyplot.py", line 1251, in savefig res = fig.savefig(*args, **kwargs) # type: ignore[func-returns-value] ^^^^^^^^^^^^^^^^^^^^^^^^^^^^ File "/home/raushan/TDS_project2/venv/lib/python3.12/site-packages/matplotlib/figure.py", line 3490, in savefig self.canvas.print_figure(fname, **kwargs) File "/home/raushan/TDS_project2/venv/lib/python3.12/site-packages/matplotlib/backend_bases.py", line 2186, in print_figure result = print_method( ^^^^^^^^^^^^^ File "/home/raushan/TDS_project2/venv/lib/python3.12/site-packages/matplotlib/backend_bases.py", line 2042, in <lambda> print_method = functools.wraps(meth)(lambda *args, **kwargs: meth( ^^^^^ TypeError: FigureCanvasAgg.print_webp() got an unexpected keyword argument 'quality'
+2025-08-17 07:52:25,838 [INFO] 🤖 Loop-1: Inside Loop LLM call.
+2025-08-17 07:53:03,001 [INFO] 💻 Loop-2: Running LLM code.
+2025-08-17 07:54:13,027 [INFO] ✅💻 Loop-2: Code executed successfully.
+2025-08-17 07:54:13,027 [INFO] ✅📁 Loop-2: Found result files.
+2025-08-17 07:54:13,028 [INFO] 🤖 Loop-2: Checking result validity.
+2025-08-17 07:54:39,646 [INFO] ✅ Loop-2: Validation successful, no re-run needed.
+2025-08-17 07:54:39,646 [INFO] 💻 Step-6: Running final code.
+2025-08-17 07:54:39,678 [INFO] 📁 Step-7: Reading result.json
+2025-08-17 07:54:39,679 [INFO] ✅📁 Step-7: send result back

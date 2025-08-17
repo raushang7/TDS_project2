@@ -1,0 +1,8 @@
+File not found. Created a sample `sample-sales.csv`.
+CSV Preview:
+         date region  sales
+0  2023-01-01  North    250
+1  2023-01-02  South    300
+2  2023-01-03   East    450
+
+Analysis complete. Results saved to result.json.

@@ -1,0 +1,309 @@
+
+[2025-08-16 23:42:04]
+✅ duckdb already installed.
+----------------------------------------
+
+[2025-08-16 23:42:04]
+✅ pandas already installed.
+----------------------------------------
+
+[2025-08-16 23:42:04]
+📜 Executing Code:
+import duckdb
+import pandas as pd
+
+# Connect to DuckDB
+con = duckdb.connect(database=":memory:", read_only=False)
+
+# Install and load necessary extensions
+con.execute("INSTALL httpfs; LOAD httpfs;")
+con.execute("INSTALL parquet; LOAD parquet;")
+
+# Set S3 region
+con.execute("SET s3_region='ap-south-1';")
+
+# Define the S3 path to the Parquet files
+parquet_path = "s3://indian-high-court-judgments/metadata/parquet/year=*/court=*/bench=*/metadata.parquet"
+
+# Get the schema of the Parquet files
+schema = con.execute(
+    f"DESCRIBE SELECT * FROM read_parquet('{parquet_path}') LIMIT 1;"
+).fetchdf()
+
+# Save the schema to metadata.txt
+with open("uploads/1af3e470-dc23-4097-9cab-66ffe62b7837/metadata.txt", "w") as f:
+    f.write("Schema of the Parquet dataset:\n")
+    f.write(schema.to_string())
+
+print(
+    "Schema information saved to uploads/1af3e470-dc23-4097-9cab-66ffe62b7837/metadata.txt"
+)
+
+----------------------------------------
+
+[2025-08-16 23:42:38]
+✅ Code executed successfully:
+Schema information saved to uploads/1af3e470-dc23-4097-9cab-66ffe62b7837/metadata.txt
+
+----------------------------------------
+
+[2025-08-16 23:43:11]
+✅ duckdb already installed.
+----------------------------------------
+
+[2025-08-16 23:43:11]
+✅ pandas already installed.
+----------------------------------------
+
+[2025-08-16 23:43:11]
+✅ scipy already installed.
+----------------------------------------
+
+[2025-08-16 23:43:11]
+✅ matplotlib already installed.
+----------------------------------------
+
+[2025-08-16 23:43:11]
+✅ seaborn already installed.
+----------------------------------------
+
+[2025-08-16 23:43:11]
+📜 Executing Code:
+import duckdb
+import pandas as pd
+from scipy import stats
+import matplotlib.pyplot as plt
+import seaborn as sns
+import io
+import base64
+import json
+
+# --- DuckDB Setup ---
+con = duckdb.connect(database=":memory:", read_only=False)
+con.execute("INSTALL httpfs; LOAD httpfs;")
+con.execute("INSTALL parquet; LOAD parquet;")
+con.execute("SET s3_region='ap-south-1';")
+
+# --- Question 1: High court with the most disposed cases from 2019 - 2022 ---
+query1 = """
+    SELECT court
+    FROM read_parquet('s3://indian-high-court-judgments/metadata/parquet/year=*/court=*/bench=*/metadata.parquet?s3_region=ap-south-1')
+    WHERE year BETWEEN 2019 AND 2022
+    GROUP BY court
+    ORDER BY COUNT(*) DESC
+    LIMIT 1;
+"""
+most_cases_court = con.execute(query1).fetchone()[0]
+
+# --- Question 2 & 3: Regression slope and plot for court=33_10 ---
+query2 = """
+    SELECT
+        year,
+        CAST(AVG(EXTRACT(epoch FROM (decision_date - strptime(date_of_registration, '%d-%m-%Y')))) / (24*60*60) AS DOUBLE) AS avg_delay_days
+    FROM
+        read_parquet('s3://indian-high-court-judgments/metadata/parquet/year=*/court=33_10/bench=*/metadata.parquet?s3_region=ap-south-1')
+    WHERE
+        date_of_registration IS NOT NULL
+        AND decision_date IS NOT NULL
+        AND TRY_STRPTIME(date_of_registration, '%d-%m-%Y') IS NOT NULL
+    GROUP BY year
+    HAVING year IS NOT NULL AND avg_delay_days IS NOT NULL
+    ORDER BY year;
+"""
+delay_df = con.execute(query2).fetchdf()
+delay_df.columns = ["year", "avg_delay_days"]
+
+# Calculate regression slope
+slope, intercept, r_value, p_value, std_err = stats.linregress(
+    delay_df["year"], delay_df["avg_delay_days"]
+)
+
+# Generate plot
+plt.figure(figsize=(8, 6))
+sns.regplot(x="year", y="avg_delay_days", data=delay_df)
+plt.title("Average Case Delay by Year for Court 33_10")
+plt.xlabel("Year")
+plt.ylabel("Average Delay (Days)")
+plt.grid(True)
+plt.tight_layout()
+
+# Encode plot to base64 data URI
+buf = io.BytesIO()
+plt.savefig(buf, format="webp", quality=80)
+plt.close()
+buf.seek(0)
+plot_base64 = base64.b64encode(buf.read()).decode("utf-8")
+plot_uri = f"data:image/webp;base64,{plot_base64}"
+
+
+# --- Final JSON Output ---
+result = {
+    "Which high court disposed the most cases from 2019 - 2022?": most_cases_court,
+    "What's the regression slope of the date_of_registration - decision_date by year in the court=33_10?": slope,
+    "Plot the year and # of days of delay from the above question as a scatterplot with a regression line. Encode as a base64 data URI under 100,000 characters": plot_uri,
+}
+
+# Save result to file
+output_path = "uploads/1af3e470-dc23-4097-9cab-66ffe62b7837/result.json"
+with open(output_path, "w") as f:
+    json.dump(result, f, indent=2)
+
+# Append metadata
+with open("uploads/1af3e470-dc23-4097-9cab-66ffe62b7837/metadata.txt", "a") as f:
+    f.write("\n\n--- Analysis Results ---\n")
+    f.write(f"High court with most cases (2019-2022): {most_cases_court}\n")
+    f.write(f"Regression slope for court 33_10: {slope}\n")
+    f.write(f"Plot for court 33_10 generated and encoded.\n")
+
+print(f"Result saved to {output_path}")
+
+----------------------------------------
+
+[2025-08-16 23:44:09]
+❌ Execution error:
+Traceback (most recent call last):
+  File "/home/raushan/TDS_project2/uploads/1af3e470-dc23-4097-9cab-66ffe62b7837/job_/script.py", line 59, in <module>
+    plt.savefig(buf, format='webp', quality=80)
+  File "/home/raushan/TDS_project2/venv/lib/python3.12/site-packages/matplotlib/pyplot.py", line 1251, in savefig
+    res = fig.savefig(*args, **kwargs)  # type: ignore[func-returns-value]
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/raushan/TDS_project2/venv/lib/python3.12/site-packages/matplotlib/figure.py", line 3490, in savefig
+    self.canvas.print_figure(fname, **kwargs)
+  File "/home/raushan/TDS_project2/venv/lib/python3.12/site-packages/matplotlib/backend_bases.py", line 2186, in print_figure
+    result = print_method(
+             ^^^^^^^^^^^^^
+  File "/home/raushan/TDS_project2/venv/lib/python3.12/site-packages/matplotlib/backend_bases.py", line 2042, in <lambda>
+    print_method = functools.wraps(meth)(lambda *args, **kwargs: meth(
+                                                                 ^^^^^
+TypeError: FigureCanvasAgg.print_webp() got an unexpected keyword argument 'quality'
+
+----------------------------------------
+
+[2025-08-16 23:44:24]
+✅ duckdb already installed.
+----------------------------------------
+
+[2025-08-16 23:44:24]
+✅ pandas already installed.
+----------------------------------------
+
+[2025-08-16 23:44:24]
+✅ scipy already installed.
+----------------------------------------
+
+[2025-08-16 23:44:24]
+✅ matplotlib already installed.
+----------------------------------------
+
+[2025-08-16 23:44:24]
+✅ seaborn already installed.
+----------------------------------------
+
+[2025-08-16 23:44:24]
+📜 Executing Code:
+import duckdb
+import pandas as pd
+from scipy import stats
+import matplotlib.pyplot as plt
+import seaborn as sns
+import io
+import base64
+import json
+
+# --- DuckDB Setup ---
+con = duckdb.connect(database=":memory:", read_only=False)
+con.execute("INSTALL httpfs; LOAD httpfs;")
+con.execute("INSTALL parquet; LOAD parquet;")
+con.execute("SET s3_region='ap-south-1';")
+
+# --- Question 1: High court with the most disposed cases from 2019 - 2022 ---
+query1 = """
+    SELECT court
+    FROM read_parquet('s3://indian-high-court-judgments/metadata/parquet/year=*/court=*/bench=*/metadata.parquet?s3_region=ap-south-1')
+    WHERE year BETWEEN 2019 AND 2022
+    GROUP BY court
+    ORDER BY COUNT(*) DESC
+    LIMIT 1;
+"""
+most_cases_court = con.execute(query1).fetchone()[0]
+
+# --- Question 2 & 3: Regression slope and plot for court=33_10 ---
+query2 = """
+    SELECT
+        year,
+        CAST(AVG(EXTRACT(epoch FROM (decision_date - strptime(date_of_registration, '%d-%m-%Y')))) / (24*60*60) AS DOUBLE) AS avg_delay_days
+    FROM
+        read_parquet('s3://indian-high-court-judgments/metadata/parquet/year=*/court=33_10/bench=*/metadata.parquet?s3_region=ap-south-1')
+    WHERE
+        date_of_registration IS NOT NULL
+        AND decision_date IS NOT NULL
+        AND TRY_STRPTIME(date_of_registration, '%d-%m-%Y') IS NOT NULL
+    GROUP BY year
+    HAVING year IS NOT NULL AND avg_delay_days IS NOT NULL
+    ORDER BY year;
+"""
+delay_df = con.execute(query2).fetchdf()
+delay_df.columns = ["year", "avg_delay_days"]
+
+# Calculate regression slope
+slope, intercept, r_value, p_value, std_err = stats.linregress(
+    delay_df["year"], delay_df["avg_delay_days"]
+)
+
+# Generate plot
+plt.figure(figsize=(8, 6))
+sns.regplot(x="year", y="avg_delay_days", data=delay_df)
+plt.title("Average Case Delay by Year for Court 33_10")
+plt.xlabel("Year")
+plt.ylabel("Average Delay (Days)")
+plt.grid(True)
+plt.tight_layout()
+
+# Encode plot to base64 data URI
+buf = io.BytesIO()
+# Corrected line: Removed the 'quality' argument as it is not supported for 'webp' format in this version.
+plt.savefig(buf, format="webp")
+plt.close()
+buf.seek(0)
+plot_base64 = base64.b64encode(buf.read()).decode("utf-8")
+plot_uri = f"data:image/webp;base64,{plot_base64}"
+
+
+# --- Final JSON Output ---
+result = {
+    "Which high court disposed the most cases from 2019 - 2022?": most_cases_court,
+    "What's the regression slope of the date_of_registration - decision_date by year in the court=33_10?": slope,
+    "Plot the year and # of days of delay from the above question as a scatterplot with a regression line. Encode as a base64 data URI under 100,000 characters": plot_uri,
+}
+
+# Save result to file
+output_path = "uploads/1af3e470-dc23-4097-9cab-66ffe62b7837/result.json"
+with open(output_path, "w") as f:
+    json.dump(result, f, indent=2)
+
+# Append metadata
+with open("uploads/1af3e470-dc23-4097-9cab-66ffe62b7837/metadata.txt", "a") as f:
+    f.write("\n\n--- Analysis Results ---\n")
+    f.write(f"High court with most cases (2019-2022): {most_cases_court}\n")
+    f.write(f"Regression slope for court 33_10: {slope}\n")
+    f.write(f"Plot for court 33_10 generated and encoded.\n")
+
+print(f"Result saved to {output_path}")
+
+----------------------------------------
+
+[2025-08-16 23:45:52]
+✅ Code executed successfully:
+Result saved to uploads/1af3e470-dc23-4097-9cab-66ffe62b7837/result.json
+
+----------------------------------------
+
+[2025-08-16 23:46:20]
+📜 Executing Code:
+
+----------------------------------------
+
+[2025-08-16 23:46:20]
+✅ Code executed successfully:
+
+----------------------------------------
