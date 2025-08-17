@@ -2,17 +2,11 @@ import itertools
 import time
 
 API_KEYS = [
-<<<<<<< HEAD
     {"key": "AIzaSyAj2AaSTmx84ap3LUQ2CI3P-2gzIzfBK8U", "req_timestamps": []},
     {"key": "AIzaSyARMc3Y_rViGuH1xXMa5pbd_4zZtjWSjWs", "req_timestamps": []},
     {"key": "AIzaSyC9hWAjMbj_5mYfPGL18B0N2mR4vEinlRQ", "req_timestamps": []},
     {"key": "AIzaSyD80etXVUIf3TsuPPxf0ZAhNiaUnxH_AcU", "req_timestamps": []},
     {"key": "AIzaSyAipYHqoYOJkw_yqxSctmjFIx9YkPh8M70", "req_timestamps": []},
-=======
-    {"key": "AIzaSyARMc3Y_rViGuH1xXMa5pbd_4zZtjWSjWs", "req_timestamps": []},
-    {"key": "AIzaSyC9hWAjMbj_5mYfPGL18B0N2mR4vEinlRQ", "req_timestamps": []},
-    {"key": "AIzaSyD80etXVUIf3TsuPPxf0ZAhNiaUnxH_AcU", "req_timestamps": []},
->>>>>>> 9aa8f1b9643f77a2c8ba36b944c4dea1f3836d07
 ]
 
 key_cycle = itertools.cycle(API_KEYS)
